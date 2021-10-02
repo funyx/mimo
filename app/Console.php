@@ -28,4 +28,9 @@ class Console extends Container
 	{
 		return 'Mimo\\';
 	}
+
+	public function provideFacades($namespace)
+	{
+		AliasLoader::setFacadeNamespace($namespace);
+	}
 }

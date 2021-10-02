@@ -25,16 +25,21 @@ use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Composer;
+use Illuminate\Support\Facades\Facade;
+use Mimo\AliasLoader;
 use Mimo\Console;
 use Mimo\Console\ActionMakeCommand;
 use Mimo\Console\ControllerMakeCommand;
 use Mimo\Console\DumpCommand;
 use Mimo\Console\MiddlewareMakeCommand;
 use Mimo\Console\ModelMakeCommand;
+use Mimo\PackageManifest;
 
 $app = new Console();
 $app->bind('config', fn() => new Repository([
 	'database' => config('database'),
+	'providers' => [],
+	'aliases' => config('aliases')
 ]));
 $app['path'] = 'app';
 $app['env'] = fn() => new Repository(config('env'));
@@ -61,6 +66,7 @@ $app->offsetSet(Composer::class, fn( $app ) => new Composer($app['files'], base_
 $app->offsetSet(DatabaseMigrationRepository::class, fn( $app ) => new DatabaseMigrationRepository($app['db.connection'], config('database.migrations')));
 $app->offsetSet(Migrator::class, fn( $app ) => new Migrator($app['db.migration.repo'], $app['db.connection'], $app['files']));
 $app->offsetSet(MigrationCreator::class, fn( $app ) => new MigrationCreator($app['files'], stubs_path('migrations')));
+$app->offsetSet(PackageManifest::class, fn ($app) => new PackageManifest($app['files'], base_path(), base_path('cache/packages.php')));
 
 $app->alias(Dispatcher::class, 'events');
 $app->alias(Filesystem::class, 'files');
@@ -73,8 +79,14 @@ $app->alias(DatabaseMigrationRepository::class, 'db.migration.repo');
 $app->alias(Composer::class, 'composer');
 $app->alias(Dispatcher::class, 'Illuminate\Contracts\Events\Dispatcher');
 
-$console = new Application($app, $app['events'], '0.1');
+Facade::clearResolvedInstances();
+Facade::setFacadeApplication($app);
+AliasLoader::getInstance(array_merge(
+	config('aliases'),
+	$app->make(PackageManifest::class)->aliases()
+))->register();
 
+$console = new Application($app, $app['events'], '0.1');
 
 $console->addCommands([
 	new DbCommand(),
