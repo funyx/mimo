@@ -26,7 +26,10 @@ use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Composer;
 use Mimo\Console;
+use Mimo\Console\ControllerMakeCommand;
 use Mimo\Console\DumpCommand;
+use Mimo\Console\MiddlewareMakeCommand;
+use Mimo\Console\ModelMakeCommand;
 
 $app = new Console();
 $app->bind( 'config', fn() => new Repository( [
@@ -40,8 +43,9 @@ $app->offsetSet( Manager::class, function($app) {
     $m = new Manager( $app );
     $m->setAsGlobal();
     $m->bootEloquent();
+
     return $m;
-});
+} );
 $app->offsetSet( ConnectionResolver::class, function(Console $app) {
     $resolver = new ConnectionResolver();
     $resolver->addConnection( 'default', $app['db']->getConnection() );
@@ -85,12 +89,12 @@ $console->addCommands( [
     new StatusCommand( $app['db.migrator'] ),
     new SeedCommand( $app['db.connection'] ),
     new SeederMakeCommand( $app['files'] ),
-    new Console\ControllerMakeCommand($app['files']),
-    new Console\ModelMakeCommand($app['files']),
-    new Console\MiddlewareMakeCommand($app['files']),
+    new ControllerMakeCommand( $app['files'] ),
+    new ModelMakeCommand( $app['files'] ),
+    new MiddlewareMakeCommand( $app['files'] ),
 ] );
 
-if( array_key_exists( 'console', $_SERVER ) ) {
+if( !array_key_exists( 'console', $_SERVER ) ) {
     $_SERVER['console'] = $console;
 }
 
