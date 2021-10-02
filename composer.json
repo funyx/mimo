@@ -5,7 +5,7 @@
     "scripts": {
         "test": "./vendor/bin/pest",
         "lint": "./vendor/bin/php-cs-fixer",
-        "start": "./bin/start"
+        "start": "./mimo"
     },
     "require": {
         "php": "^8",

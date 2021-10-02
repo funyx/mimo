@@ -1,10 +1,12 @@
 #!/usr/bin/env php
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+// artisan port
+
+require_once __DIR__ . '/vendor/autoload.php';
 
 /* @var \Illuminate\Console\Application $app */
-$app = require_once __DIR__ . '/../core/console.php';
+$app = require_once __DIR__ . '/core/console.php';
 
 $status = $app->run();
 
