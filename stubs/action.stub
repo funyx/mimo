@@ -1,0 +1,26 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ rootNamespace }}Action;
+use Nyholm\Psr7\Response;
+use Nyholm\Psr7\ServerRequest;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
+
+class {{ class }} extends Action
+{
+    /**
+     * Handle the incoming request.
+     *
+     * @param  ResponseInterface        $response
+     * @param  ServerRequestInterface   $response
+     *
+     * @return Response
+     */
+    public function __invoke(ResponseInterface $response, ServerRequestInterface $request) :Response
+    {
+        //
+        return $response;
+    }
+}

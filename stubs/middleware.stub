@@ -2,20 +2,38 @@
 
 namespace {{ namespace }};
 
-use Closure;
-use Illuminate\Http\Request;
+use Nyholm\Psr7\Response;
+use Nyholm\Psr7\ServerRequest;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ *@see https://www.slimframework.com/docs/v4/concepts/middleware.html#invokable-class-middleware-example
+ */
 class {{ class }}
 {
     /**
-     * Handle an incoming request.
+     * Example middleware invokable class
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
+     * @param  ServerRequestInterface  $request PSR-7 request
+     * @param  RequestHandlerInterface $handler PSR-15 request handler
+     *
+     * @return Response
      */
-    public function handle(Request $request, Closure $next)
+    public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler): Response
     {
-        return $next($request);
+        /** @var ServerRequest $request */
+        $response = $handler->handle($request);
+
+        // You can build a new response /BEFORE way/
+        // $existingContent = (string) $response->getBody();
+        // $response = new Response();
+        // $response->getBody()->write('BEFORE' . $existingContent);
+
+        // Or decorate the original one /AFTER way/
+        // $response->getBody()->write('AFTER');
+
+        // you must always return $response
+        return $response;
     }
 }

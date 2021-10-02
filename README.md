@@ -29,11 +29,12 @@ Available commands:
   db:seed           Seed the database with records
   db:wipe           Drop all tables, views, and types
  make
+  make:action       Create a new action class
   make:controller   Create a new controller class
   make:factory      Create a new model factory
   make:middleware   Create a new middleware class
   make:migration    Create a new migration file
-  make:model        Create a new Eloquent model class
+  make:model        Create a new model class
   make:seeder       Create a new seeder class
  migrate
   migrate:fresh     Drop all tables and re-run all migrations
