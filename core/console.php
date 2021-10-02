@@ -54,8 +54,7 @@ $app->offsetSet( ConnectionResolver::class, function(Console $app) {
     return $resolver;
 } );
 $app->offsetSet( Composer::class, fn($app) => new Composer( $app['files'], base_path() ) );
-$app->offsetSet( DatabaseMigrationRepository::class, fn($app) => new DatabaseMigrationRepository( $app['db.connection'], config( 'database.migrations' ) )
-);
+$app->offsetSet( DatabaseMigrationRepository::class, fn($app) => new DatabaseMigrationRepository( $app['db.connection'], config( 'database.migrations' ) ) );
 $app->offsetSet( Migrator::class, fn($app) => new Migrator( $app['db.migration.repo'], $app['db.connection'], $app['files'] ) );
 $app->offsetSet( MigrationCreator::class, fn($app) => new MigrationCreator( $app['files'], stubs_path( 'migrations' ) ) );
 
