@@ -1,0 +1,47 @@
+{
+    "name": "funyx/mimo",
+    "description": "project",
+    "type": "project",
+    "scripts": {
+        "test": "./vendor/bin/pest",
+        "lint": "./vendor/bin/php-cs-fixer",
+        "start": "./bin/start"
+    },
+    "require": {
+        "php": "^8",
+        "php-di/php-di": "^6.3",
+        "php-di/slim-bridge": "^3.1",
+        "monolog/monolog": "^2.3",
+        "nyholm/psr7": "^1.4",
+        "nyholm/psr7-server": "^1.0",
+        "guzzlehttp/guzzle": "^7.3",
+        "phpoption/phpoption": "^1.8",
+        "vlucas/phpdotenv": "^5.3",
+        "illuminate/database": "^8.62",
+        "illuminate/support": "^8.62",
+        "illuminate/console": "^8.62",
+        "illuminate/config": "^8.62",
+        "illuminate/events": "^8.62",
+        "illuminate/filesystem": "^8.62"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.1",
+        "pestphp/pest": "^1.20",
+        "symfony/var-dumper": "^5.3"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Dimitar Dobchev",
+            "email": "ddobchev@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Mimo\\": "app"
+        },
+        "files": [
+            "helpers.php"
+        ]
+    }
+}
