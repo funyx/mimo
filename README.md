@@ -51,5 +51,4 @@ Available commands:
 
 WIP:
  - add Test related commands 
- - fix stubs to match slim4 setup
  - implement pest factory command
