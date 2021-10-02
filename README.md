@@ -3,10 +3,10 @@ mimo
 
 slim4 skeleton:
 - eloquent orm
-- artisan cli
+- mimo cli (artisan port)
 ```shell
 $ ./mimo                                                                                                                                                                       [14:49:00]
-Laravel Framework 0.1
+Mimo 0.1
 
 Usage:
   command [options] [arguments]

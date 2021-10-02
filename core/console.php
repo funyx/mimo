@@ -87,6 +87,7 @@ AliasLoader::getInstance(array_merge(
 ))->register();
 
 $console = new Application($app, $app['events'], '0.1');
+$console->setName('Mimo');
 
 $console->addCommands([
 	new DbCommand(),
