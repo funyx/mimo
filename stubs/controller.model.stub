@@ -15,7 +15,7 @@ class {{ class }} extends Controller
      * Display a listing of the resource.
      *
      * @param  ResponseInterface        $response
-     * @param  ServerRequestInterface   $response
+     * @param  ServerRequestInterface   $request
      *
      * @return Response
      */
@@ -30,7 +30,7 @@ class {{ class }} extends Controller
      * Store a newly created resource in storage.
      *
      * @param  ResponseInterface        $response
-     * @param  ServerRequestInterface   $response
+     * @param  ServerRequestInterface   $request
      *
      * @return Response
      */
@@ -46,7 +46,7 @@ class {{ class }} extends Controller
      *
      * @param  string                   ${{ modelVariable }}
      * @param  ResponseInterface        $response
-     * @param  ServerRequestInterface   $response
+     * @param  ServerRequestInterface   $request
      *
      * @return Response
      */
@@ -64,7 +64,7 @@ class {{ class }} extends Controller
      *
      * @param  string                   ${{ modelVariable }}
      * @param  ResponseInterface        $response
-     * @param  ServerRequestInterface   $response
+     * @param  ServerRequestInterface   $request
      *
      * @return Response
      */
@@ -82,7 +82,7 @@ class {{ class }} extends Controller
      *
      * @param  string                   ${{ modelVariable }}
      * @param  ResponseInterface        $response
-     * @param  ServerRequestInterface   $response
+     * @param  ServerRequestInterface   $request
      *
      * @return Response
      */

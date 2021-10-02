@@ -36,6 +36,7 @@ $app = new Console();
 $app->bind('config', fn() => new Repository([
 	'database' => config('database'),
 ]));
+$app['path'] = 'app';
 $app['env'] = fn() => new Repository(config('env'));
 
 $app->offsetSet(Dispatcher::class, fn() => new Dispatcher());

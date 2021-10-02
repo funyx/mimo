@@ -49,7 +49,6 @@ class ModelMakeCommand extends GeneratorCommand
 			$this->input->setOption('seed', true);
 			$this->input->setOption('migration', true);
 			$this->input->setOption('controller', true);
-			$this->input->setOption('resource', true);
 		}
 
 		if ($this->option('factory')) {
@@ -126,8 +125,7 @@ class ModelMakeCommand extends GeneratorCommand
 
 		$this->call('make:controller', array_filter([
 			'name'    => "{$controller}Controller",
-			'--model' => $this->option('resource') || $this->option('api') ? $modelName : null,
-			'--api'   => $this->option('api'),
+			'--model' => $modelName,
 		]));
 	}
 
@@ -150,7 +148,7 @@ class ModelMakeCommand extends GeneratorCommand
 	 */
 	protected function resolveStubPath( $stub )
 	{
-		return file_exists($customPath = stubs_path()) ? $customPath : __DIR__.$stub;
+		return file_exists($customPath = stubs_path($stub)) ? $customPath : __DIR__.$stub;
 	}
 
 	/**
@@ -208,19 +206,7 @@ class ModelMakeCommand extends GeneratorCommand
 				's',
 				InputOption::VALUE_NONE,
 				'Create a new seeder file for the model'
-			],
-			[
-				'resource',
-				'r',
-				InputOption::VALUE_NONE,
-				'Indicates if the generated controller should be a resource controller'
-			],
-			[
-				'api',
-				null,
-				InputOption::VALUE_NONE,
-				'Indicates if the generated controller should be an API controller'
-			],
+			]
 		];
 	}
 }

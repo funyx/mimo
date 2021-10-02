@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace Mimo;
 
 class Model extends \Illuminate\Database\Eloquent\Model
 {

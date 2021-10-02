@@ -14,7 +14,7 @@ class {{ class }} extends Action
      * Handle the incoming request.
      *
      * @param  ResponseInterface        $response
-     * @param  ServerRequestInterface   $response
+     * @param  ServerRequestInterface   $request
      *
      * @return Response
      */
