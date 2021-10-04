@@ -13,33 +13,82 @@
 
 // uses(Tests\TestCase::class)->in('Feature');
 
-/*
-|--------------------------------------------------------------------------
-| Expectations
-|--------------------------------------------------------------------------
-|
-| When you're writing tests, you often need to check that values meet certain conditions. The
-| "expect()" function gives you access to a set of "expectations" methods that you can use
-| to assert different things. Of course, you may extend the Expectation API at any time.
-|
-*/
+use Nyholm\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
-});
+function getRoute($route_name, $params = []) {
+	global $app;
 
-/*
-|--------------------------------------------------------------------------
-| Functions
-|--------------------------------------------------------------------------
-|
-| While Pest is very powerful out-of-the-box, you may have some testing code specific to your
-| project that you don't want to repeat in every file. Here you can also expose helpers as
-| global functions to help you to reduce the number of lines of code in your test files.
-|
-*/
-
-function something()
-{
-    // ..
+	return $app->getContainer()->get( 'router' )->pathFor( $route_name, $params );
 }
+
+/**
+ * @throws \Throwable
+ */
+function mockRequest($method, $uri, $data = null, $headers = null): ResponseInterface {
+	global $app;
+
+	$psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
+
+	$creator = new \Nyholm\Psr7Server\ServerRequestCreator(
+		$psr17Factory, // ServerRequestFactory
+		$psr17Factory, // UriFactory
+		$psr17Factory, // UploadedFileFactory
+		$psr17Factory  // StreamFactory
+	);
+
+	$serverRequest = $creator->fromGlobals();;
+
+	$serverRequest = $serverRequest->withMethod($method);
+	$serverRequest->withUri(new \Nyholm\Psr7\Uri($uri));
+
+	if( isset( $headers ) && is_array($headers) ) {
+		foreach($headers as $name => $value){
+			$serverRequest = $serverRequest->withHeader($name, $value);
+		}
+	}
+
+	if($data){
+		$serverRequest->getBody()->write($data);
+	}
+
+	return $app->handle( $serverRequest );
+}
+
+function mockResponse(): ResponseInterface
+{
+	return new Response();
+}
+
+///**
+// * @throws \Throwable
+// */
+//function get($uri, $data = null, $headers = null): ResponseInterface {
+//	return api( 'GET', $uri, $data, $headers );
+//}
+//
+///**
+// * @throws \Throwable
+// */
+//function post($uri, $data = null, $headers = null): ResponseInterface {
+//	return api( 'POST', $uri, $data, $headers );
+//}
+//
+///**
+// * @throws \Throwable
+// */
+//function put($uri, $data = null, $headers = null): ResponseInterface {
+//	return api( 'PUT', $uri, $data, $headers );
+//}
+//
+///**
+// * @throws \Throwable
+// */
+//function delete($uri, $data = null, $headers = null): ResponseInterface {
+//	return api( 'DELETE', $uri, $data, $headers );
+//}
+//
+//function resJson(ResponseInterface $r, $associative = true){
+//	$record = (string) $r->getBody();
+//	return json_decode($record, $associative);
+//}

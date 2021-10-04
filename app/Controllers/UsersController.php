@@ -1,12 +1,13 @@
 <?php
 
-namespace {{ namespace }};
+namespace Mimo\Controllers;
 
-use {{ rootNamespace }}Controller;
+use Mimo\Controller;
+use Mimo\Models\Users;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest as Request;
 
-class {{ class }} extends Controller
+class UsersController extends Controller
 {
     public function paginator(Response $response, Request $request) :Response
     {
@@ -22,7 +23,9 @@ class {{ class }} extends Controller
 
     public function show(Response $response, Request $request, $id) :Response
     {
-        //
+    	$m = new Users();
+//        $m->where('id', $id);
+//        $m->get();
         return $response;
     }
 

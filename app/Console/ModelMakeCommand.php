@@ -63,7 +63,7 @@ class ModelMakeCommand extends GeneratorCommand
 			$this->createSeeder();
 		}
 
-		if ($this->option('controller') || $this->option('resource') || $this->option('api')) {
+		if ($this->option('controller')) {
 			$this->createController();
 		}
 	}
@@ -119,15 +119,22 @@ class ModelMakeCommand extends GeneratorCommand
 	 */
 	protected function createController()
 	{
-		$controller = Str::studly(class_basename($this->argument('name')));
+		$name = Str::studly(class_basename($this->argument('name')));
 
-		$modelName = $this->qualifyClass($this->getNameInput());
+		$modelName = $this->laravel->qualifyModel($this->getNameInput());
+
+		$testName = $this->laravel->qualifyTest("{$modelName}");
+
+		$factoryName = $this->laravel->qualifyFactory("{$modelName}");
 
 		$this->call('make:controller', array_filter([
-			'name'    => "{$controller}Controller",
+			'name'    => "{$name}Controller",
 			'--model' => $modelName,
+			'--test'  => $testName,
+			'--factory' => $factoryName
 		]));
 	}
+
 
 	/**
 	 * Get the stub file for the generator.
@@ -148,7 +155,7 @@ class ModelMakeCommand extends GeneratorCommand
 	 */
 	protected function resolveStubPath( $stub )
 	{
-		return file_exists($customPath = stubs_path($stub)) ? $customPath : __DIR__.$stub;
+		return stubs_path($stub);
 	}
 
 	/**
@@ -160,7 +167,7 @@ class ModelMakeCommand extends GeneratorCommand
 	 */
 	protected function getDefaultNamespace( $rootNamespace )
 	{
-		return is_dir(app_path('Models')) ? $rootNamespace.'\\Models' : $rootNamespace;
+		return $rootNamespace.'\\Models';
 	}
 
 	/**

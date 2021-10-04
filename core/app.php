@@ -22,6 +22,12 @@ $app->get('/', function ( ServerRequestInterface $request, ResponseInterface $re
 
 	return $response;
 });
+// users routes
+$app->get('/users',[\Mimo\Controllers\UsersController::class, 'paginator'])->setName('users.paginator');
+$app->post('/users',[\Mimo\Controllers\UsersController::class, 'store'])->setName('users.store');
+$app->get('/users/{id}',[\Mimo\Controllers\UsersController::class, 'show'])->setName('users.show');
+$app->put('/users/{id}',[\Mimo\Controllers\UsersController::class, 'update'])->setName('users.update');
+$app->delete('/users{id}',[\Mimo\Controllers\UsersController::class, 'destroy'])->setName('users.destroy');
 
 if ( !array_key_exists('app', $_SERVER)) {
 	$_SERVER['app'] = $app;

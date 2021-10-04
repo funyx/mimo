@@ -5,6 +5,7 @@ namespace Mimo\Console;
 
 
 use Illuminate\Console\GeneratorCommand;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -36,19 +37,30 @@ class ControllerMakeCommand extends GeneratorCommand
 	 *
 	 * @return string
 	 */
-	protected function getStub()
-	{
-		$stub = null;
 
-		if ($this->option('parent')) {
-			$stub = '/controller.nested.stub';
-		} elseif ($this->option('model')) {
-			$stub = '/controller.model.stub';
-		} elseif ($this->option('invokable')) {
-			$stub = '/controller.invokable.stub';
+	public function handle()
+	{
+		if (parent::handle() === false && !$this->option('force')) {
+			return false;
 		}
 
-		$stub = $stub ?? '/controller.stub';
+		if ($this->option('factory')) {
+			$this->createTest();
+		}
+		$route_uri = $this->laravel->routeUri($this->getNameInput());
+		$controller = $this->laravel->qualifyController($this->getNameInput());
+		$this->output->success("Controller generated. Add this routes to your app.");
+		$this->output->text("// $route_uri routes");
+		$this->output->text("\$app->get('/$route_uri',[\\$controller::class, 'paginator'])->setName('$route_uri.paginator');");
+		$this->output->text("\$app->post('/$route_uri',[\\$controller::class, 'store'])->setName('$route_uri.store');");
+		$this->output->text("\$app->get('/$route_uri/{id}',[\\$controller::class, 'show'])->setName('$route_uri.show');");
+		$this->output->text("\$app->put('/$route_uri/{id}',[\\$controller::class, 'update'])->setName('$route_uri.update');");
+		$this->output->text("\$app->delete('/$route_uri{id}',[\\$controller::class, 'destroy'])->setName('$route_uri.destroy');");
+	}
+
+	protected function getStub()
+	{
+		$stub = '/controller.stub';
 
 		return $this->resolveStubPath($stub);
 	}
@@ -196,12 +208,6 @@ class ControllerMakeCommand extends GeneratorCommand
 				'Create the class even if the controller already exists'
 			],
 			[
-				'invokable',
-				'i',
-				InputOption::VALUE_NONE,
-				'Generate a single method, invokable controller class.'
-			],
-			[
 				'model',
 				'm',
 				InputOption::VALUE_OPTIONAL,
@@ -213,6 +219,44 @@ class ControllerMakeCommand extends GeneratorCommand
 				InputOption::VALUE_OPTIONAL,
 				'Generate a nested resource controller class.'
 			],
+			[
+				'test',
+				't',
+				InputOption::VALUE_OPTIONAL,
+				'Generate a PEST test for the controller class.'
+			],
+			[
+				'factory',
+				'f',
+				InputOption::VALUE_OPTIONAL,
+				'Used when test option is specified.'
+			],
 		];
+	}
+
+	protected function createTest()
+	{
+		$name = Str::studly(class_basename($this->argument('name')));
+
+		$this->call('make:test', [
+			'name' => "{$name}Test",
+			'--controller' => $name,
+			'--model' => $this->parseModel($this->option('model'))
+		]);
+	}
+
+	protected function qualifyFactory($name)
+	{
+		$name = ltrim($name, '\\/');
+
+		$name = str_replace('/', '\\', $name);
+
+		$rootNamespace = 'Database\\Factories\\';
+
+		if (Str::startsWith($name, $rootNamespace)) {
+			return $name;
+		}
+
+		return $rootNamespace.$name;
 	}
 }

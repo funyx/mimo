@@ -109,6 +109,7 @@ $console->addCommands([
 	new ControllerMakeCommand($app['files']),
 	new MiddlewareMakeCommand($app['files']),
 	new ModelMakeCommand($app['files']),
+	new Console\TestMakeCommand($app['files']),
 ]);
 
 if ( !array_key_exists('console', $_SERVER)) {

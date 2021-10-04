@@ -3,34 +3,94 @@
 namespace Mimo;
 
 use Illuminate\Container\Container;
-use JetBrains\PhpStorm\Pure;
+use Illuminate\Support\Str;
 
 class Console extends Container
 {
-	const VERSION = '0.1';
+    public const VERSION = '0.1';
 
-	public function environment( ...$environments )
+    public function environment(...$environments)
+    {
+        return $this['env'];
+    }
+
+    public function databasePath($path = ''): string
+    {
+        return database_path($path);
+    }
+
+    public function basePath($path = ''): string
+    {
+        return base_path($path);
+    }
+
+    public function getNamespace(): string
+    {
+        return 'Mimo\\';
+    }
+
+    public function provideFacades($namespace)
+    {
+        AliasLoader::setFacadeNamespace($namespace);
+    }
+
+	public function qualifyModel($name)
 	{
-		return $this['env'];
+		$name = ltrim($name, '\\/');
+		$name = str_replace('/', '\\', $name);
+		$rootNamespace = $this->getNamespace().'Models\\';
+		if (Str::startsWith($name, $rootNamespace)) {
+			return $name;
+		}
+
+		return $rootNamespace.$name;
 	}
 
-	#[Pure] public function databasePath( $path = '' ): string
+	public function qualifyFactory($name)
 	{
-		return database_path($path);
+		$name = ltrim($name, '\\/');
+		$name = str_replace('/', '\\', $name);
+		$rootNamespace = 'Database\\Factories\\';
+		if (Str::startsWith($name, $rootNamespace)) {
+			return $name;
+		}
+
+		return $rootNamespace.$name;
 	}
 
-	#[Pure] public function basePath( $path = '' ): string
+	public function qualifyTest($name, $type = 'Feature')
 	{
-		return base_path($path);
+		$name = ltrim($name, '\\/');
+		$name = str_replace('/', '\\', $name);
+		$rootNamespace = 'Tests\\' . $type . '\\';
+		if (Str::startsWith($name, $rootNamespace)) {
+			return $name;
+		}
+
+		return $rootNamespace.$name;
 	}
 
-	public function getNamespace(): string
-	{
-		return 'Mimo\\';
-	}
+    public function qualifyController($name)
+    {
+        $name = ltrim($name, '\\/');
+        $name = str_replace('/', '\\', $name);
+        $rootNamespace = $this->getNamespace().'Controllers\\';
+        if (Str::startsWith($name, $rootNamespace)) {
+            return $name;
+        }
 
-	public function provideFacades($namespace)
-	{
-		AliasLoader::setFacadeNamespace($namespace);
-	}
+        return $rootNamespace.$name;
+    }
+
+    public function routeUri(string $var)
+    {
+    	$segments = explode(' ', $this->descriptionVariable($var));
+	    array_pop($segments);
+        return implode('-' ,$segments);
+    }
+
+    public function descriptionVariable(string $var)
+    {
+        return rtrim(strtolower(implode(' ', preg_split('/(?<=\\w)(?=[A-Z])/', $var))), ' ');
+    }
 }
