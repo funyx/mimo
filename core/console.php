@@ -32,6 +32,7 @@ use Mimo\Console\ActionMakeCommand;
 use Mimo\Console\ControllerMakeCommand;
 use Mimo\Console\DocsServeCommand;
 use Mimo\Console\DumpCommand;
+use Mimo\Console\GenFromSpecCommand;
 use Mimo\Console\MiddlewareMakeCommand;
 use Mimo\Console\ModelMakeCommand;
 use Mimo\Console\TestMakeCommand;
@@ -111,6 +112,7 @@ $console->addCommands([
     new ModelMakeCommand($app['files']),
     new TestMakeCommand($app['files']),
     new DocsServeCommand(),
+    new GenFromSpecCommand(),
 ]);
 
 if (! array_key_exists('console', $_SERVER)) {

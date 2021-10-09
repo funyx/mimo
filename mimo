@@ -10,6 +10,6 @@ $app = require_once __DIR__ . '/core/console.php';
 
 $status = $app->run();
 
-exit($status);
+die($status);
 
 ?>
