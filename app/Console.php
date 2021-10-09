@@ -34,43 +34,43 @@ class Console extends Container
         AliasLoader::setFacadeNamespace($namespace);
     }
 
-	public function qualifyModel($name)
-	{
-		$name = ltrim($name, '\\/');
-		$name = str_replace('/', '\\', $name);
-		$rootNamespace = $this->getNamespace().'Models\\';
-		if (Str::startsWith($name, $rootNamespace)) {
-			return $name;
-		}
+    public function qualifyModel($name): string
+    {
+        $name = ltrim($name, '\\/');
+        $name = str_replace('/', '\\', $name);
+        $rootNamespace = $this->getNamespace().'Models\\';
+        if (Str::startsWith($name, $rootNamespace)) {
+            return $name;
+        }
 
-		return $rootNamespace.$name;
-	}
+        return $rootNamespace.$name;
+    }
 
-	public function qualifyFactory($name)
-	{
-		$name = ltrim($name, '\\/');
-		$name = str_replace('/', '\\', $name);
-		$rootNamespace = 'Database\\Factories\\';
-		if (Str::startsWith($name, $rootNamespace)) {
-			return $name;
-		}
+    public function qualifyFactory($name): string
+    {
+        $name = ltrim($name, '\\/');
+        $name = str_replace('/', '\\', $name);
+        $rootNamespace = 'Database\\Factories\\';
+        if (Str::startsWith($name, $rootNamespace)) {
+            return $name;
+        }
 
-		return $rootNamespace.$name;
-	}
+        return $rootNamespace.$name;
+    }
 
-	public function qualifyTest($name, $type = 'Feature')
-	{
-		$name = ltrim($name, '\\/');
-		$name = str_replace('/', '\\', $name);
-		$rootNamespace = 'Tests\\' . $type . '\\';
-		if (Str::startsWith($name, $rootNamespace)) {
-			return $name;
-		}
+    public function qualifyTest($name, $type = 'Feature'): string
+    {
+        $name = ltrim($name, '\\/');
+        $name = str_replace('/', '\\', $name);
+        $rootNamespace = 'Tests\\' . $type . '\\';
+        if (Str::startsWith($name, $rootNamespace)) {
+            return $name;
+        }
 
-		return $rootNamespace.$name;
-	}
+        return $rootNamespace.$name;
+    }
 
-    public function qualifyController($name)
+    public function qualifyController($name): string
     {
         $name = ltrim($name, '\\/');
         $name = str_replace('/', '\\', $name);
@@ -82,15 +82,20 @@ class Console extends Container
         return $rootNamespace.$name;
     }
 
-    public function routeUri(string $var)
+    public function testCaseVar(string $var): string
     {
-    	$segments = explode(' ', $this->descriptionVariable($var));
-	    array_pop($segments);
-        return implode('-' ,$segments);
+        $segments = explode(' ', $this->descriptionVariable($var));
+
+        return implode('_', $segments);
     }
 
-    public function descriptionVariable(string $var)
+    public function descriptionVariable(string $var): string
     {
-        return rtrim(strtolower(implode(' ', preg_split('/(?<=\\w)(?=[A-Z])/', $var))), ' ');
+        return rtrim(strtolower(implode(' ', $this->explodeCaps($var))), ' ');
+    }
+
+    public function explodeCaps(string $var): array
+    {
+        return preg_split('/(?<=\\w)(?=[A-Z])/', $var);
     }
 }

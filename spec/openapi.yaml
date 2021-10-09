@@ -1,0 +1,45 @@
+openapi: 3.1.0
+info:
+  title: The title of the API
+  description: <p>This documentation is aimed to serve the mimo framework.</p>
+  termsOfService: A URL to the Terms of Service for the API. This MUST be in the form of a URL.
+  contact:
+    name: Dimitar Dobchev
+    url: https://github.com/funyx
+    email: ddobchev@gmail.com
+  license:
+    name: Apache-2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: https://api.mimo.com
+    description: local environment
+    variables:
+      username:
+        # note! no enum here means it is an open value
+        default: demouser
+        description: api user username
+      password:
+        # note! no enum here means it is an open value
+        default: demouser
+        description: api user password
+      port:
+        enum:
+          - '443'
+        default: '443'
+      basePath:
+        # open meaning there is the opportunity to use special base paths as assigned by the provider, default is `v2`
+        default: v2
+paths:
+  /:
+    get:
+      description: Hello World
+      responses:
+        '200':
+          description: Hello Wolrd Success
+          content:
+            'application/json': {}
+components:
+security:
+tags:
+externalDocs:

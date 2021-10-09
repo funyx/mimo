@@ -6,31 +6,18 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 $container = new ContainerBuilder();
-
-$container->addDefinitions(require_once __DIR__.'/container.php');
+$container->addDefinitions(__DIR__.'/container.php');
 
 try {
-	$app = Bridge::create($container->build());
+    $app = Bridge::create($container->build());
 } catch (Exception $e) {
-	throw new RuntimeException('DI\Container build failed');
+    throw new RuntimeException('DI\Container build failed');
 }
 
-$app->get('/', function ( ServerRequestInterface $request, ResponseInterface $response ): ResponseInterface
-{
-	$message = array_key_exists('name', $request->getQueryParams()) ? strlen($request->getQueryParams()['name']) ? 'Hello '.$request->getQueryParams()['name'] : '"name" is empty string' : 'Hello World';
-	$response->getBody()->write($message);
+// COMMAND ANCHOR : DO NOT TOUCH!!!
 
-	return $response;
-});
-// users routes
-$app->get('/users',[\Mimo\Controllers\UsersController::class, 'paginator'])->setName('users.paginator');
-$app->post('/users',[\Mimo\Controllers\UsersController::class, 'store'])->setName('users.store');
-$app->get('/users/{id}',[\Mimo\Controllers\UsersController::class, 'show'])->setName('users.show');
-$app->put('/users/{id}',[\Mimo\Controllers\UsersController::class, 'update'])->setName('users.update');
-$app->delete('/users{id}',[\Mimo\Controllers\UsersController::class, 'destroy'])->setName('users.destroy');
-
-if ( !array_key_exists('app', $_SERVER)) {
-	$_SERVER['app'] = $app;
+if (! array_key_exists('app', $_SERVER)) {
+    $_SERVER['app'] = $app;
 }
 
 return $app;
