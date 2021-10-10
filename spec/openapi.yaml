@@ -2,25 +2,22 @@ openapi: 3.0.0
 info:
   title: Mimo API
   description: <p>This documentation is aimed to serve the mimo framework.</p>
-  termsOfService: A URL to the Terms of Service for the API. This MUST be in the form of a URL.
   contact:
     name: Dimitar Dobchev
-    url: 'https://github.com/funyx'
+    url: https://github.com/funyx
     email: ddobchev@gmail.com
   license:
     name: Apache-2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
 servers:
-  - url: 'https://api.mimo.com'
+  - url: https://api.mimo.com
     description: local environment
     variables:
       port:
         enum:
-          - '443'
-        default: '443'
-      basePath:
-        default: v2
+          - "443"
+        default: "443"
 paths:
   /:
     get:
@@ -29,18 +26,59 @@ paths:
       tags:
         - Hello World
       responses:
-        '200':
-          description: Hello Wolrd Success
+        200:
+          description: OK
           content:
             application/json:
               schema:
-                type: string
-                example: Hello World
-                readOnly: true
-              examples: {}
-          headers: {}
-    parameters: []
+                $ref: "#/components/schemas/HelloWorldResponse"
+              examples:
+                schema:
+                  $ref: "#/components/schemas/HelloWorldResponse"
+  /bearer:
+    get:
+      security:
+        - cognito: []
+      operationId: checkBearer
+      description: Hello World
+      tags:
+        - Hello World
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HelloWorldResponse"
+              examples:
+                OK:
+                  $ref: "#/components/schemas/HelloWorldResponse"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedResponse"
+              examples:
+                Unauthorized:
+                  $ref: "#/components/schemas/UnauthorizedResponse"
 components:
+  schemas:
+    HelloWorldResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Hello World
+    UnauthorizedResponse:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: true
+        description:
+          type: string
+          example: Unauthorized
   securitySchemes:
     cognito:
       type: oauth2

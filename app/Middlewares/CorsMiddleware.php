@@ -29,7 +29,7 @@ final class CorsMiddleware implements MiddlewareInterface
         $response = $handler->handle($request);
 
         $response = $response
-            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Origin', $request->getHeaderLine('Origin'))
             ->withHeader('Access-Control-Allow-Methods', implode(', ', $methods))
             ->withHeader('Access-Control-Allow-Headers', $requestHeaders ?: '*');
 

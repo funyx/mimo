@@ -5,7 +5,10 @@ use DI\ContainerBuilder;
 use DI\DependencyException;
 use DI\NotFoundException;
 use Mimo\Actions\PreflightAction;
+use Mimo\Middlewares\AuthGuard;
+use Mimo\Middlewares\AuthStrategiesMiddleware;
 use Mimo\Middlewares\CorsMiddleware;
+use Mimo\Middlewares\JsonThrowableMiddleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Middleware\RoutingMiddleware;
@@ -20,8 +23,10 @@ try {
 }
 
 try {
-	$app->add($container->get(CorsMiddleware::class));
-	$app->add($container->get(RoutingMiddleware::class));
+    $app->add($container->get(JsonThrowableMiddleware::class)); // <-- last
+    $app->add($container->get(AuthStrategiesMiddleware::class));
+    $app->add($container->get(CorsMiddleware::class));
+    $app->add($container->get(RoutingMiddleware::class)); // <-- first
 } catch (DependencyException $e) {
     throw new RuntimeException('DI\Container DependencyException : '.$e->getMessage());
 } catch (NotFoundException $e) {
@@ -29,12 +34,20 @@ try {
 }
 
 $app->get('/', function (ServerRequestInterface $request, ResponseInterface $response): ResponseInterface {
-    $message = 'Hello World';
-    $response->getBody()->write($message);
+    $body = ['message' => 'Hello World'];
+    $response->getBody()->write(json_encode($body));
 
     return $response->withHeader('Content-Type', 'application/json');
 });
 $app->options('/', PreflightAction::class);
+
+$app->get('/cognito', function (ServerRequestInterface $request, ResponseInterface $response): ResponseInterface {
+    $body = ['message' => 'Hello World'];
+    $response->getBody()->write(json_encode($body));
+
+    return $response->withHeader('Content-Type', 'application/json');
+})->add(new AuthGuard('cognito'));
+$app->options('/cognito', PreflightAction::class);
 // COMMAND ANCHOR : DO NOT TOUCH!!!
 
 if (! array_key_exists('app', $_SERVER)) {

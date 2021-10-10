@@ -1,7 +1,25 @@
 <?php
 
+use Mimo\Middlewares\JsonThrowableMiddleware;
+use function DI\autowire;
 use DI\Bridge\Slim\CallableResolver;
+use function DI\create;
+use function DI\get;
+use GuzzleHttp\Client;
+use Illuminate\Config\Repository;
+use Illuminate\Container\Container;
+use Illuminate\Database\Capsule\Manager;
+use Mimo\Middlewares\AuthStrategiesMiddleware;
+use Mimo\Middlewares\CorsMiddleware;
+use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Http\Message\UploadedFileFactoryInterface;
+use Psr\Http\Message\UriFactoryInterface;
 use Slim\Interfaces\CallableResolverInterface;
 use Slim\Interfaces\RouteCollectorInterface;
 use Slim\Interfaces\RouteParserInterface;
@@ -10,22 +28,6 @@ use Slim\Middleware\RoutingMiddleware;
 use Slim\Routing\RouteCollector;
 use Slim\Routing\RouteParser;
 use Slim\Routing\RouteResolver;
-use function DI\autowire;
-use function DI\create;
-use function DI\get;
-use GuzzleHttp\Client;
-use Illuminate\Config\Repository;
-use Illuminate\Container\Container;
-use Illuminate\Database\Capsule\Manager;
-use Mimo\Middlewares\CorsMiddleware;
-use Nyholm\Psr7\Factory\Psr17Factory;
-use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestFactoryInterface;
-use Psr\Http\Message\StreamFactoryInterface;
-use Psr\Http\Message\UploadedFileFactoryInterface;
-use Psr\Http\Message\UriFactoryInterface;
 
 return [
     // psr 17 messages
@@ -48,29 +50,31 @@ return [
         return $m;
     },
     'Mimo\Models\*' => function ($c, $target) {
-        $model = new ($target->getName());
+        $model = new ($target->getName())();
 
         return $model;
     },
-	CallableResolverInterface::class => create(CallableResolver::class),
+    CallableResolverInterface::class => create(CallableResolver::class),
     RouteCollectorInterface::class => create(RouteCollector::class)
         ->constructor(
-	        get(ResponseFactoryInterface::class),
-			get(CallableResolverInterface::class),
+            get(ResponseFactoryInterface::class),
+            get(CallableResolverInterface::class),
         ),
     RouteResolverInterface::class => create(RouteResolver::class)
         ->constructor(
-	        get(RouteCollectorInterface::class),
+            get(RouteCollectorInterface::class),
         ),
-	RouteParserInterface::class => create(RouteParser::class)
+    RouteParserInterface::class => create(RouteParser::class)
         ->constructor(
-	        get(RouteCollectorInterface::class),
+            get(RouteCollectorInterface::class),
         ),
     // psr 15 middlewares
+    JsonThrowableMiddleware::class => create(JsonThrowableMiddleware::class),
+    AuthStrategiesMiddleware::class => create(AuthStrategiesMiddleware::class),
     CorsMiddleware::class => create(CorsMiddleware::class),
     RoutingMiddleware::class => create(RoutingMiddleware::class)
-	    ->constructor(
-		    get(RouteResolverInterface::class),
-		    get(RouteParserInterface::class),
-	    ),
+        ->constructor(
+            get(RouteResolverInterface::class),
+            get(RouteParserInterface::class),
+        ),
 ];
