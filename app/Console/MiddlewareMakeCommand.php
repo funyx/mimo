@@ -34,7 +34,7 @@ class MiddlewareMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return $this->resolveStubPath('/middleware.stub');
+        return $this->resolveStubPath('middleware.stub');
     }
 
     /**
@@ -46,7 +46,7 @@ class MiddlewareMakeCommand extends GeneratorCommand
      */
     protected function resolveStubPath($stub)
     {
-        return file_exists($customPath = stubs_path()) ? $customPath : __DIR__.$stub;
+        return stubs_path($stub);
     }
 
     /**
@@ -59,5 +59,10 @@ class MiddlewareMakeCommand extends GeneratorCommand
     protected function getDefaultNamespace($rootNamespace)
     {
         return $rootNamespace.'\Middlewares';
+    }
+
+    protected function buildClass( $name )
+    {
+	    return parent::buildClass($name);
     }
 }
