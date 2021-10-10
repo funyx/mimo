@@ -1,12 +1,12 @@
 <?php
 
-namespace {{ namespace }};
+namespace Mimo\Actions;
 
-use {{ rootNamespace }}Action;
-use Psr\Http\Message\ServerRequestInterface;
+use Mimo\Action;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
-class {{ class }} extends Action
+class PreflightAction extends Action
 {
     /**
      * Handle the incoming request.
